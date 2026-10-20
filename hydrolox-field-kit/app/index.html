@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000F3D">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hydrolox">
+  <title>Hydrolox Field Kit</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-row">
+      <a class="brand" href="#/" aria-label="Home">
+        <span class="logo" id="logo"></span>
+        <span class="brand-sub">Field Kit</span>
+      </a>
+      <button class="status" id="status" type="button" aria-live="polite">
+        <span class="dot"></span><span class="status-text">Starting…</span>
+      </button>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon" data-icon="search"></span>
+      <input id="search" type="search" placeholder="Search all files" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+      <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden data-icon="x"></button>
+    </div>
+    <div class="progress" id="progress" hidden><div class="progress-bar" id="progressBar"></div></div>
+  </header>
+
+  <div class="install" id="install" hidden></div>
+
+  <main id="main" class="main"></main>
+
+  <!-- File viewer -->
+  <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true">
+    <div class="viewer-bar">
+      <button class="vbtn close" id="vClose" type="button" aria-label="Close"><span data-icon="chevronLeft"></span><span>Back</span></button>
+      <div class="viewer-title" id="vTitle"></div>
+      <div class="viewer-actions">
+        <button class="vbtn" id="vZoomOut" type="button" aria-label="Zoom out" data-icon="minus" hidden></button>
+        <button class="vbtn" id="vZoomIn" type="button" aria-label="Zoom in" data-icon="plus" hidden></button>
+        <button class="vbtn" id="vStar" type="button" aria-label="Star" data-icon="star"></button>
+        <button class="vbtn" id="vShare" type="button" aria-label="Share or open in another app" data-icon="share"></button>
+      </div>
+    </div>
+    <div class="viewer-body" id="vBody"></div>
+  </div>
+
+  <!-- Info sheet -->
+  <div class="sheet-backdrop" id="sheet" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <h2 id="sheetTitle">Offline storage</h2>
+      <dl class="facts" id="facts"></dl>
+      <div class="sheet-actions">
+        <button class="btn" id="btnSync" type="button">Check for updates</button>
+        <button class="btn ghost" id="btnClose" type="button">Done</button>
+      </div>
+      <button class="link-danger" id="btnForget" type="button">Remove files &amp; passcode from this device</button>
+    </div>
+  </div>
+
+  <!-- Passcode lock -->
+  <div class="lock" id="lock" hidden>
+    <form class="lock-card" id="lockForm" autocomplete="off">
+      <span class="lock-logo"></span>
+      <h2 id="lockTitle">Enter the team passcode</h2>
+      <p id="lockText">You only need to do this once on this device.</p>
+      <input id="lockInput" type="password" placeholder="Team passcode" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="Team passcode">
+      <label class="lock-show"><input type="checkbox" id="lockShow"> Show passcode</label>
+      <div class="lock-err" id="lockErr" role="alert"></div>
+      <button class="btn" id="lockGo" type="submit">Unlock</button>
+      <button class="btn ghost" id="lockCancel" type="button" hidden>Not now</button>
+    </form>
+  </div>
+
+  <!-- iPad Safari: install first -->
+  <div class="lock" id="gate" hidden>
+    <div class="lock-card">
+      <span class="lock-logo"></span>
+      <h2>Add Field Kit to your Home Screen</h2>
+      <ol class="steps">
+        <li>Tap the <b>Share</b> button <span class="share-glyph">□↑</span> in Safari's toolbar.</li>
+        <li>Choose <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+        <li>Open <b>Hydrolox</b> from your Home Screen and enter the team passcode.</li>
+      </ol>
+      <p class="fine">Files are saved inside the Home Screen app so they work with no internet.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

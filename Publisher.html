@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydrolox Field Kit Publisher</title>
+<style>
+  :root { --navy:#000F3D; --blue:#0377BA; --mist:#C7CCDC; --bg:#F3F5F9; --ink:#0B1430; --muted:#5B6680; --line:#E1E5EE; --ok:#1E8E5A; --bad:#B42318; --warn:#B26A00;
+    font-family:"Neue Helvetica","Helvetica Neue",-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color-scheme: light; }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--ink); }
+  header { background:var(--navy); color:#fff; padding:20px 28px; display:flex; align-items:center; gap:14px; }
+  header .logo { width:124px; height:39px; background:#fff; -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODEgNTciIGZpbGw9IiMwMDBGM0QiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iSHlkcm9sb3giPgo8cGF0aCBkPSJNMTI1LjMwOCAwLjQ0NTU3MkgxMTUuMzA3VjQzLjI3MzlIMTI1LjMwOFYwLjQ0NTU3MloiLz4KPHBhdGggZD0iTTE1MC4xMDQgMTguNDE5MUMxNTAuMjI3IDE3LjQzMDkgMTUwLjA0MyAxNi40Mjg3IDE0OS41NzUgMTUuNTQ5NEMxNDkuMTA4IDE0LjY3MDEgMTQ4LjM4IDEzLjk1NjYgMTQ3LjQ5MiAxMy41MDY2QzE0NS4yMDMgMTIuNDc1NyAxNDIuNzMgMTEuOTE4NiAxNDAuMjIgMTEuODY5MUMxMzYuODQ3IDExLjQ4MTQgMTMzLjQzOCAxMi4xNjMzIDEzMC40NzMgMTMuODE4NUMxMjkuNjk2IDE0LjM1MTggMTI5LjA3NSAxNS4wODI3IDEyOC42NzQgMTUuOTM1OEMxMjguMjczIDE2Ljc4OSAxMjguMTA3IDE3LjczMzcgMTI4LjE5MyAxOC42NzI1VjM3LjY3OTFDMTI4LjIyNCAzOC44OTUyIDEyOC42OTUgNDAuMDU4NyAxMjkuNTE4IDQwLjk1NDFDMTMxLjM2NiA0Mi4zNjQ3IDEzMy41OTIgNDMuMTkyNiAxMzUuOTEyIDQzLjMzMjRDMTM3LjA4MiA0My40Mjk5IDEzOC4xOTMgNDMuNDY4OSAxMzkuMjI2IDQzLjQ2ODlDMTQxLjkyMiA0My41NDg2IDE0NC42MDkgNDMuMTExOSAxNDcuMTQxIDQyLjE4MjNDMTQ4LjA0OSA0MS44MTQxIDE0OC44MjggNDEuMTgzNiAxNDkuMzc2IDQwLjM3MTFDMTQ5LjkyNSAzOS41NTg2IDE1MC4yMTkgMzguNjAxIDE1MC4yMjEgMzcuNjIwN0wxNTAuMTA0IDE4LjQxOTFaTTE0MC4xMDMgMzkuMDI0MkgxMzkuOTI4QzEzOS42MDMgMzkuMTMwMiAxMzkuMjU3IDM5LjE1OSAxMzguOTE5IDM5LjEwODJDMTM4LjU4IDM5LjA1NzUgMTM4LjI1OSAzOC45Mjg2IDEzNy45NzkgMzguNzMxOEMxMzcuODcgMzguNjM5OCAxMzcuNzgxIDM4LjUyNjcgMTM3LjcxOCAzOC4zOTk0QzEzNy42NTQgMzguMjcyMSAxMzcuNjE3IDM4LjEzMzEgMTM3LjYwOCAzNy45OTFWMTcuMTMyNEMxMzcuNjIyIDE2Ljg0ODggMTM3Ljc0OSAxNi41ODI0IDEzNy45NTkgMTYuMzkxN0MxMzguMzU0IDE2LjIwMDIgMTM4Ljc4NyAxNi4xMDA3IDEzOS4yMjYgMTYuMTAwN0MxMzkuNjY1IDE2LjEwMDcgMTQwLjA5OCAxNi4yMDAyIDE0MC40OTMgMTYuMzkxN0MxNDAuNjI3IDE2LjQ3IDE0MC43MzUgMTYuNTg1MyAxNDAuODA0IDE2LjcyMzdDMTQwLjg3MyAxNi44NjIxIDE0MC45MDEgMTcuMDE3NyAxNDAuODgzIDE3LjE3MTRWMzguMDNDMTQwLjg3IDM4LjI1NTMgMTQwLjc4OCAzOC40NzExIDE0MC42NDggMzguNjQ4N0MxNDAuNTA5IDM4LjgyNjQgMTQwLjMxOSAzOC45NTczIDE0MC4xMDMgMzkuMDI0MloiLz4KPHBhdGggZD0iTTEwOS43NzEgMTMuNTA2NkMxMDcuNDgyIDEyLjQ3NTcgMTA1LjAwOSAxMS45MTg2IDEwMi41IDExLjg2OTFDOTkuMTI2NiAxMS40ODE0IDk1LjcxNyAxMi4xNjMzIDkyLjc1MjYgMTMuODE4NUM5MS45NzUyIDE0LjM1MTggOTEuMzU0MSAxNS4wODI3IDkwLjk1MzIgMTUuOTM1OEM5MC41NTIzIDE2Ljc4OSA5MC4zODYxIDE3LjczMzcgOTAuNDcxOCAxOC42NzI1VjM3LjY3OTFDOTAuNTAzIDM4Ljg5NTIgOTAuOTc0IDQwLjA1ODcgOTEuNzk3MyA0MC45NTQxQzkzLjY0NSA0Mi4zNjQ3IDk1Ljg3MTEgNDMuMTkyNiA5OC4xOTE0IDQzLjMzMjRDOTkuMzYxIDQzLjQyOTkgMTAwLjQ3MiA0My40Njg5IDEwMS41MDUgNDMuNDY4OUMxMDQuMjAxIDQzLjU0ODYgMTA2Ljg4OCA0My4xMTE5IDEwOS40MiA0Mi4xODIzQzExMC4zMjkgNDEuODE0MSAxMTEuMTA3IDQxLjE4MzYgMTExLjY1NSA0MC4zNzExQzExMi4yMDQgMzkuNTU4NiAxMTIuNDk4IDM4LjYwMSAxMTIuNSAzNy42MjA3TDExMi40MDMgMTguMzQxMUMxMTIuNTEzIDE3LjM2MjUgMTEyLjMyIDE2LjM3MzYgMTExLjg0OSAxNS41MDg2QzExMS4zNzkgMTQuNjQzNyAxMTAuNjUzIDEzLjk0NDcgMTA5Ljc3MSAxMy41MDY2Wk0xMDIuMzgzIDM5LjAyNDJIMTAyLjIwN0MxMDEuODgyIDM5LjEzMDIgMTAxLjUzNiAzOS4xNTkgMTAxLjE5OCAzOS4xMDgyQzEwMC44NiAzOS4wNTc1IDEwMC41MzggMzguOTI4NiAxMDAuMjU4IDM4LjczMThDMTAwLjE0OSAzOC42Mzk4IDEwMC4wNiAzOC41MjY3IDk5Ljk5NjYgMzguMzk5NEM5OS45MzMgMzguMjcyMSA5OS44OTU4IDM4LjEzMzEgOTkuODg3NCAzNy45OTFWMTcuMTMyNEM5OS45MDE2IDE2Ljg0ODggMTAwLjAyOCAxNi41ODI0IDEwMC4yMzggMTYuMzkxN0MxMDAuNjMzIDE2LjIwMDIgMTAxLjA2NiAxNi4xMDA3IDEwMS41MDUgMTYuMTAwN0MxMDEuOTQ0IDE2LjEwMDcgMTAyLjM3OCAxNi4yMDAyIDEwMi43NzIgMTYuMzkxN0MxMDIuOTA2IDE2LjQ3IDEwMy4wMTQgMTYuNTg1MyAxMDMuMDgzIDE2LjcyMzdDMTAzLjE1MiAxNi44NjIxIDEwMy4xOCAxNy4wMTc3IDEwMy4xNjIgMTcuMTcxNFYzOC4wM0MxMDMuMTQ5IDM4LjI1NTMgMTAzLjA2NyAzOC40NzExIDEwMi45MjggMzguNjQ4N0MxMDIuNzg4IDM4LjgyNjQgMTAyLjU5OCAzOC45NTczIDEwMi4zODMgMzkuMDI0MloiLz4KPHBhdGggZD0iTTE3MC45NjIgMjYuNjI2TDE3Ni41NzcgMTIuNTcwOUwxNzYuNjM1IDEyLjQxNDlMMTY2LjI0NSAxMi4zOTU0SDE2Ni4xNDdMMTYzLjM0IDIyLjM1NjhMMTYwLjIwMiAxMi40MTQ5TDE2MC4xODIgMTIuMzE3NEwxNTAuMDY1IDEyLjMzNjlMMTU2LjA1IDI3LjY1OTJMMTQ5Ljg4OSA0My4yNzM5SDE2MC4yNkwxNjMuMzYgMzEuODY5OUwxNjYuODMgNDMuMTc2NUwxNjYuODQ5IDQzLjI3MzlIMTc3LjAwNkwxNzAuOTYyIDI2LjYyNloiLz4KPHBhdGggZD0iTTgxLjUwNDUgMTQuMzQ0OEw4MS4wOTUxIDEyLjE0Mkg3Mi42MzQ3VjEyLjI3ODRDNzIuNjM0NyAxMi4yNzg0IDcyLjgyOTYgMTQuODEyNyA3Mi45ODU2IDE2LjE3NzJDNzMuMTYxIDE3Ljk5MDIgNzMuMTIyMSA0Mi43MjgxIDczLjEyMjEgNDIuOTgxNVY0My4zMzI0SDgyLjMwMzdWMzEuMDUxMkM4Mi4zMDM3IDMwLjAzNzUgODIuMzAzNyAyOC44Mjg5IDgyLjMwMzcgMjcuNjU5MkM4Mi4zMDM3IDI1LjM1ODkgODIuMzAzNyAyMy4xOTUxIDgyLjMwMzcgMjIuNjQ5M0M4Mi41Mzc3IDIwLjk3MjggODIuOTI3NiAyMC41MDQ5IDgzLjc2NTggMjAuMDU2NkM4NC42MDQgMTkuNjA4MiA4NS43MTUyIDE5LjMzNTMgODguNTgwOCAxOS45Mzk2SDg4LjczNjhWMTIuNDE0OUg4OC42MTk4Qzg2LjA5NTcgMTIuMjEwMyA4My41NzkzIDEyLjg5MjkgODEuNTA0NSAxNC4zNDQ4WiIvPgo8cGF0aCBkPSJNOS4wNjQ3MiAyMS43NTI1VjIwLjk3MjhDOS4wMDY4NiAyMC4yMDk4IDkuMDUyNzYgMTkuNDQyNiA5LjIwMTE4IDE4LjY5MkM5LjM3NjYyIDE4LjIwNDYgOS45MDI5NiAxNy45OTAyIDEwLjgzODcgMTcuOTkwMkMxMS43NzQ0IDE3Ljk5MDIgMTIuMzM5NyAxOC4yMDQ2IDEyLjQ5NTcgMTguNjcyNUMxMi42NDAxIDE5LjU0MTggMTIuNjg1OSAyMC40MjQ2IDEyLjYzMjEgMjEuMzA0MlY0My4zMzI0SDIxLjY5NjhWMjIuNDkzM0MyMS43NjA3IDIwLjUwMzQgMjEuNjMwMSAxOC41MTIxIDIxLjMwNyAxNi41NDc2QzIwLjk4MjEgMTUuMzQ0OSAyMC4yMjU3IDE0LjMwNCAxOS4xODIxIDEzLjYyMzVDMTcuOTU3MSAxMi43NjI1IDE2LjQ4NzcgMTIuMzE4MiAxNC45OTA5IDEyLjM1NjRDMTMuOTYzMyAxMi4zNTIgMTIuOTQ0NCAxMi41NDM5IDExLjk4ODggMTIuOTIxN0MxMS4xMDg5IDEzLjI3OTkgMTAuMjk3NiAxMy43ODc3IDkuNTkxMDYgMTQuNDIyOFYwLjQ0NTU3MkgwVjQzLjMzMjRIOS4xMDM3MVYyMS44ODlMOS4wNjQ3MiAyMS43NTI1WiIvPgo8cGF0aCBkPSJNNjAuNjY1NCAxNC4zMDU4QzU5Ljk3MDkgMTMuNjAxNSA1OS4xNTExIDEzLjAzMyA1OC4yNDgxIDEyLjYyOTNDNTcuMjM4MiAxMi4xOTg2IDU2LjE0ODggMTEuOTg2MSA1NS4wNTExIDEyLjAwNTVDNTMuNjY2NyAxMS45NzY5IDUyLjMwNjUgMTIuMzcxMyA1MS4xNTIzIDEzLjEzNjJDNTAuMTcyNSAxMy43NTM0IDQ5LjQzNTggMTQuNjg5OSA0OS4wNjY0IDE1Ljc4NzRDNDguNzAzOCAxNy40MzggNDguNTUzMiAxOS4xMjgxIDQ4LjYxODEgMjAuODE2OFYzNS4wODY0QzQ4LjU1ODkgMzYuNzM2MyA0OC43MDk1IDM4LjM4NyA0OS4wNjY0IDM5Ljk5ODlDNDkuNDM0MSA0MS4xMDIgNTAuMTYxOSA0Mi4wNDk0IDUxLjEzMjggNDIuNjg5MUM1Mi4yNDAyIDQzLjQ3OTQgNTMuNTczOSA0My44ODk4IDU0LjkzNDEgNDMuODU4N0M1Ni4wMTI5IDQzLjg1ODUgNTcuMDc4MiA0My42MTg4IDU4LjA1MzIgNDMuMTU3QzU5LjAzMTIgNDIuNjY1IDU5LjkxNTQgNDIuMDA1MiA2MC42NjU0IDQxLjIwNzZWNDMuMTU3SDcwLjE3ODRWMC40NDU1NzJINjAuNjI2NEw2MC42NjU0IDE0LjMwNThaTTYwLjY2NTQgMTcuMDkzNVYzOC4wM0M2MC42NDY2IDM4LjI2NTQgNjAuNTUzMyAzOC40ODg2IDYwLjM5OSAzOC42Njc0QzYwLjI0NDggMzguODQ2MSA2MC4wMzc3IDM4Ljk3MTEgNTkuODA3NiAzOS4wMjQySDU5LjYzMjJDNTkuMzA2OSAzOS4xMzAyIDU4Ljk2MTMgMzkuMTU5IDU4LjYyMjkgMzkuMTA4MkM1OC4yODQ2IDM5LjA1NzUgNTcuOTYyNyAzOC45Mjg2IDU3LjY4MjggMzguNzMxOEM1Ny41NzQyIDM4LjYzOTggNTcuNDg1MyAzOC41MjY3IDU3LjQyMTcgMzguMzk5NEM1Ny4zNTggMzguMjcyMSA1Ny4zMjA4IDM4LjEzMzIgNTcuMzEyNCAzNy45OTFWMTcuMTMyNUM1Ny4zMjY2IDE2Ljg0ODggNTcuNDUyOCAxNi41ODI0IDU3LjY2MzMgMTYuMzkxN0M1OC4wNTgyIDE2LjIwMDIgNTguNDkxNSAxNi4xMDA3IDU4LjkzMDQgMTYuMTAwN0M1OS4zNjkzIDE2LjEwMDcgNTkuODAyNSAxNi4yMDAyIDYwLjE5NzUgMTYuMzkxN0M2MC4zMjgyIDE2LjQ1NzkgNjAuNDM4NyAxNi41NTc5IDYwLjUxNzYgMTYuNjgxM0M2MC41OTY0IDE2LjgwNDcgNjAuNjQwNyAxNi45NDcxIDYwLjY0NTkgMTcuMDkzNUg2MC42NjU0WiIvPgo8cGF0aCBkPSJNMzUuOTQ3IDI3LjU2MTdMMzUuNDk4NiAyOS45MDFDMzUuNDk4NiAzMC4xMzUgMzUuNDk4NiAzMC4zNjg5IDM1LjM2MjEgMzAuNjAyOEMzNS4xNjcyIDI5LjY2NzEgMzQuOTUyOCAyOC42NTM0IDM0Ljc3NzMgMjcuODU0MkwzMS4wNTQgMTIuMzU2NEgyMS40NDM0TDMwLjQzMDIgNDAuNTgzOEMzMC41ODkxIDQxLjAyOTEgMzAuNjgxMSA0MS40OTU1IDMwLjcwMzEgNDEuOTY3OEMzMC42ODE2IDQyLjM3NDEgMzAuNTYxMiA0Mi43Njg5IDMwLjM1MjIgNDMuMTE4QzI5LjcwMDkgNDQuNTMzNCAyOC43MDE2IDQ1Ljc2MDcgMjcuNDQ3NiA0Ni42ODU0QzI2LjA3NTggNDcuODU2NCAyNC4zNTU4IDQ4LjU0MTYgMjIuNTU0NiA0OC42MzQ4SDBWNTYuNzI0OEgyNC4zNjc1QzI2LjE5MDQgNTYuNzc5NyAyOC4wMDUzIDU2LjQ2MjMgMjkuNzAxMyA1NS43OTE5QzMxLjM5NzMgNTUuMTIxNiAzMi45Mzg4IDU0LjExMjQgMzQuMjMxNSA1Mi44MjZDMzYuNzg1MiA0OS45NDA5IDM5LjEwNSA0NS42MTMyIDQyLjczMDkgMzIuODgzNkw0OC40NjIxIDEyLjM1NjRIMzguOTg4TDM1Ljk0NyAyNy41NjE3WiIvPgo8cGF0aCBkPSJNMTc3LjgwNSA0Ni41ODc5TDE3Ny4xNDIgNDcuMzQ4MkMxNzUuMDI5IDQ5LjczNjMgMTcyLjA5IDUxLjIzNDEgMTY4LjkxNiA1MS41Mzk0QzE2NC4zMzUgNTEuNTM5NCAxNjAuMDA3IDQ3LjE1MzIgMTU5Ljk2OCA0Ny4xMTQyTDE1OS41MiA0Ni42NjU5TDE1OS4wNzEgNDcuMjMxMkMxNTkuMDcxIDQ3LjIzMTIgMTU0Ljg0MSA1MS42NTY0IDE1MS4zOTEgNTEuNjU2NEMxNDguMTE2IDUxLjY1NjQgMTQyLjYzOCA0Ny4yMzEyIDE0Mi41OTkgNDcuMTcyN0wxNDIuMTUgNDYuODAyM0wxNDEuNzYgNDcuMjMxMkMxNDEuNzYgNDcuMjMxMiAxMzcuNjI4IDUxLjY1NjQgMTMzLjk2MyA1MS42NTY0QzEzMC4wNjQgNTEuNjU2NCAxMjUuNDI1IDQ3LjI1MDcgMTI1LjM4NiA0Ny4yMTE3TDEyNC45MzcgNDYuNzgyOUwxMjQuNTI4IDQ3LjI1MDdDMTI0LjUyOCA0Ny4yNTA3IDEyMC41MTIgNTEuNjU2NCAxMTYuNDc3IDUxLjY1NjRDMTEyLjM4MyA1MS42NTY0IDEwOC4xNTMgNDcuMjcwMiAxMDguMTE0IDQ3LjIzMTJMMTA3LjY4NSA0Ni43ODI5TDEwNy4yMzcgNDcuMjExN0MxMDcuMjM3IDQ3LjIxMTcgMTAyLjU1OCA1MS42NTY0IDk4Ljk3MTEgNTEuNjU2NEM5NS4zNDUyIDUxLjY1NjQgOTAuODQyMSA0Ny4yNzAyIDkwLjgwMzEgNDcuMjExN0w5MC4zNzQzIDQ2Ljc4MjlMODkuOTQ1NCA0Ny4yMTE3Qzg5Ljk0NTQgNDcuMjExNyA4NS41Mzk4IDUxLjYzNjkgODEuNDg1IDUxLjYzNjlDNzcuNTg2MiA1MS42MzY5IDczLjU3MDQgNDcuMjcwMiA3My41MzE0IDQ3LjIzMTJMNzMuMTAyNiA0Ni43NDM5TDcyLjYzNDcgNDcuMjExN0M3Mi42MzQ3IDQ3LjIxMTcgNjguMTUxMSA1MS42NTY0IDYzLjk3OTQgNTEuNjU2NEM1OS43ODgyIDUxLjY1NjQgNTYuMTgxOCA0Ny4zMDkyIDU2LjE4MTggNDcuMjcwMkw1NS44MTE0IDQ2LjgwMjNMNTUuMzQzNSA0Ny4xNTMyQzUzLjY2NyA0OC40MDA5IDQ4Ljc3NCA1MS42MzY5IDQ2LjM5NTggNTEuNjU2NEM0NC41NDU4IDUxLjU4NjcgNDIuNzU0IDUwLjk5MTcgNDEuMjI5OSA0OS45NDA5TDQwLjcyMyA0OS41NTFMMzcuODc2OSA1My42MDU4TDM4LjM4MzcgNTMuOTU2NkM0MC43NjI1IDU1LjU5MzMgNDMuNTIwOCA1Ni41OTMzIDQ2LjM5NTggNTYuODYxM0M0OS42MzE4IDU2Ljg2MTMgNTQuMTkzNCA1My41ODYzIDU1LjYxNjQgNTIuNDc1MUM1Ni43NDcxIDUzLjY2NDIgNjAuMTE5NiA1Ni44NjEzIDYzLjkwMTQgNTYuODYxM0M2Ny42MDUzIDU2Ljg2MTMgNzEuNjk5IDUzLjQzMDMgNzIuOTg1NiA1Mi4xODI3Qzc0LjI1MjcgNTMuNDMwMyA3Ny45OTU2IDU2Ljg2MTMgODEuNDA3IDU2Ljg2MTNDODQuOTE1OSA1Ni44NjEzIDg4Ljk5MDIgNTMuNTg2MyA5MC4yOTYzIDUyLjQ1NTZDOTEuNTgyOSA1My41ODYzIDk1LjU0MDIgNTYuODYxMyA5OC44OTMyIDU2Ljg2MTNDMTAyLjE2OCA1Ni44NjEzIDEwNi4yODEgNTMuNTg2MyAxMDcuNTg3IDUyLjQ1NTZDMTA4Ljg3NCA1My41ODYzIDExMi44OSA1Ni44NjEzIDExNi4zOTkgNTYuODYxM0MxMTkuODMgNTYuODYxMyAxMjMuNjUxIDUzLjQzMDMgMTI0LjkxOCA1Mi4xODI3QzEyNi4yNDMgNTMuNDEwOCAxMzAuMjc5IDU2Ljg2MTMgMTMzLjkwNCA1Ni44NjEzQzEzNy40OTEgNTYuODYxMyAxNDEgNTMuNzIyNyAxNDIuMjI4IDUyLjUxNDFDMTQ0LjY3MSA1NS4wMTQgMTQ3LjkyOCA1Ni41NTYyIDE1MS40MSA1Ni44NjEzQzE1My4wMiA1Ni43Njg2IDE1NC41OSA1Ni4zMjg1IDE1Ni4wMTMgNTUuNTcxNEMxNTcuNDM3IDU0LjgxNDMgMTU4LjY4IDUzLjc1OCAxNTkuNjU2IDUyLjQ3NTFDMTYxLjI1NSA1My41NjY4IDE2Ni4zMDMgNTYuODYxMyAxNjkuNTk4IDU2Ljg2MTNDMTczLjQ5NyA1Ni44NjEzIDE3OS4zNDUgNTIuNjExNiAxNzkuNjE4IDUyLjQzNjFMMTgwLjAwOCA1Mi4xNjMyTDE3Ny44MDUgNDYuNTg3OVoiLz4KPC9zdmc+Cg==") no-repeat left center/contain; mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODEgNTciIGZpbGw9IiMwMDBGM0QiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iSHlkcm9sb3giPgo8cGF0aCBkPSJNMTI1LjMwOCAwLjQ0NTU3MkgxMTUuMzA3VjQzLjI3MzlIMTI1LjMwOFYwLjQ0NTU3MloiLz4KPHBhdGggZD0iTTE1MC4xMDQgMTguNDE5MUMxNTAuMjI3IDE3LjQzMDkgMTUwLjA0MyAxNi40Mjg3IDE0OS41NzUgMTUuNTQ5NEMxNDkuMTA4IDE0LjY3MDEgMTQ4LjM4IDEzLjk1NjYgMTQ3LjQ5MiAxMy41MDY2QzE0NS4yMDMgMTIuNDc1NyAxNDIuNzMgMTEuOTE4NiAxNDAuMjIgMTEuODY5MUMxMzYuODQ3IDExLjQ4MTQgMTMzLjQzOCAxMi4xNjMzIDEzMC40NzMgMTMuODE4NUMxMjkuNjk2IDE0LjM1MTggMTI5LjA3NSAxNS4wODI3IDEyOC42NzQgMTUuOTM1OEMxMjguMjczIDE2Ljc4OSAxMjguMTA3IDE3LjczMzcgMTI4LjE5MyAxOC42NzI1VjM3LjY3OTFDMTI4LjIyNCAzOC44OTUyIDEyOC42OTUgNDAuMDU4NyAxMjkuNTE4IDQwLjk1NDFDMTMxLjM2NiA0Mi4zNjQ3IDEzMy41OTIgNDMuMTkyNiAxMzUuOTEyIDQzLjMzMjRDMTM3LjA4MiA0My40Mjk5IDEzOC4xOTMgNDMuNDY4OSAxMzkuMjI2IDQzLjQ2ODlDMTQxLjkyMiA0My41NDg2IDE0NC42MDkgNDMuMTExOSAxNDcuMTQxIDQyLjE4MjNDMTQ4LjA0OSA0MS44MTQxIDE0OC44MjggNDEuMTgzNiAxNDkuMzc2IDQwLjM3MTFDMTQ5LjkyNSAzOS41NTg2IDE1MC4yMTkgMzguNjAxIDE1MC4yMjEgMzcuNjIwN0wxNTAuMTA0IDE4LjQxOTFaTTE0MC4xMDMgMzkuMDI0MkgxMzkuOTI4QzEzOS42MDMgMzkuMTMwMiAxMzkuMjU3IDM5LjE1OSAxMzguOTE5IDM5LjEwODJDMTM4LjU4IDM5LjA1NzUgMTM4LjI1OSAzOC45Mjg2IDEzNy45NzkgMzguNzMxOEMxMzcuODcgMzguNjM5OCAxMzcuNzgxIDM4LjUyNjcgMTM3LjcxOCAzOC4zOTk0QzEzNy42NTQgMzguMjcyMSAxMzcuNjE3IDM4LjEzMzEgMTM3LjYwOCAzNy45OTFWMTcuMTMyNEMxMzcuNjIyIDE2Ljg0ODggMTM3Ljc0OSAxNi41ODI0IDEzNy45NTkgMTYuMzkxN0MxMzguMzU0IDE2LjIwMDIgMTM4Ljc4NyAxNi4xMDA3IDEzOS4yMjYgMTYuMTAwN0MxMzkuNjY1IDE2LjEwMDcgMTQwLjA5OCAxNi4yMDAyIDE0MC40OTMgMTYuMzkxN0MxNDAuNjI3IDE2LjQ3IDE0MC43MzUgMTYuNTg1MyAxNDAuODA0IDE2LjcyMzdDMTQwLjg3MyAxNi44NjIxIDE0MC45MDEgMTcuMDE3NyAxNDAuODgzIDE3LjE3MTRWMzguMDNDMTQwLjg3IDM4LjI1NTMgMTQwLjc4OCAzOC40NzExIDE0MC42NDggMzguNjQ4N0MxNDAuNTA5IDM4LjgyNjQgMTQwLjMxOSAzOC45NTczIDE0MC4xMDMgMzkuMDI0MloiLz4KPHBhdGggZD0iTTEwOS43NzEgMTMuNTA2NkMxMDcuNDgyIDEyLjQ3NTcgMTA1LjAwOSAxMS45MTg2IDEwMi41IDExLjg2OTFDOTkuMTI2NiAxMS40ODE0IDk1LjcxNyAxMi4xNjMzIDkyLjc1MjYgMTMuODE4NUM5MS45NzUyIDE0LjM1MTggOTEuMzU0MSAxNS4wODI3IDkwLjk1MzIgMTUuOTM1OEM5MC41NTIzIDE2Ljc4OSA5MC4zODYxIDE3LjczMzcgOTAuNDcxOCAxOC42NzI1VjM3LjY3OTFDOTAuNTAzIDM4Ljg5NTIgOTAuOTc0IDQwLjA1ODcgOTEuNzk3MyA0MC45NTQxQzkzLjY0NSA0Mi4zNjQ3IDk1Ljg3MTEgNDMuMTkyNiA5OC4xOTE0IDQzLjMzMjRDOTkuMzYxIDQzLjQyOTkgMTAwLjQ3MiA0My40Njg5IDEwMS41MDUgNDMuNDY4OUMxMDQuMjAxIDQzLjU0ODYgMTA2Ljg4OCA0My4xMTE5IDEwOS40MiA0Mi4xODIzQzExMC4zMjkgNDEuODE0MSAxMTEuMTA3IDQxLjE4MzYgMTExLjY1NSA0MC4zNzExQzExMi4yMDQgMzkuNTU4NiAxMTIuNDk4IDM4LjYwMSAxMTIuNSAzNy42MjA3TDExMi40MDMgMTguMzQxMUMxMTIuNTEzIDE3LjM2MjUgMTEyLjMyIDE2LjM3MzYgMTExLjg0OSAxNS41MDg2QzExMS4zNzkgMTQuNjQzNyAxMTAuNjUzIDEzLjk0NDcgMTA5Ljc3MSAxMy41MDY2Wk0xMDIuMzgzIDM5LjAyNDJIMTAyLjIwN0MxMDEuODgyIDM5LjEzMDIgMTAxLjUzNiAzOS4xNTkgMTAxLjE5OCAzOS4xMDgyQzEwMC44NiAzOS4wNTc1IDEwMC41MzggMzguOTI4NiAxMDAuMjU4IDM4LjczMThDMTAwLjE0OSAzOC42Mzk4IDEwMC4wNiAzOC41MjY3IDk5Ljk5NjYgMzguMzk5NEM5OS45MzMgMzguMjcyMSA5OS44OTU4IDM4LjEzMzEgOTkuODg3NCAzNy45OTFWMTcuMTMyNEM5OS45MDE2IDE2Ljg0ODggMTAwLjAyOCAxNi41ODI0IDEwMC4yMzggMTYuMzkxN0MxMDAuNjMzIDE2LjIwMDIgMTAxLjA2NiAxNi4xMDA3IDEwMS41MDUgMTYuMTAwN0MxMDEuOTQ0IDE2LjEwMDcgMTAyLjM3OCAxNi4yMDAyIDEwMi43NzIgMTYuMzkxN0MxMDIuOTA2IDE2LjQ3IDEwMy4wMTQgMTYuNTg1MyAxMDMuMDgzIDE2LjcyMzdDMTAzLjE1MiAxNi44NjIxIDEwMy4xOCAxNy4wMTc3IDEwMy4xNjIgMTcuMTcxNFYzOC4wM0MxMDMuMTQ5IDM4LjI1NTMgMTAzLjA2NyAzOC40NzExIDEwMi45MjggMzguNjQ4N0MxMDIuNzg4IDM4LjgyNjQgMTAyLjU5OCAzOC45NTczIDEwMi4zODMgMzkuMDI0MloiLz4KPHBhdGggZD0iTTE3MC45NjIgMjYuNjI2TDE3Ni41NzcgMTIuNTcwOUwxNzYuNjM1IDEyLjQxNDlMMTY2LjI0NSAxMi4zOTU0SDE2Ni4xNDdMMTYzLjM0IDIyLjM1NjhMMTYwLjIwMiAxMi40MTQ5TDE2MC4xODIgMTIuMzE3NEwxNTAuMDY1IDEyLjMzNjlMMTU2LjA1IDI3LjY1OTJMMTQ5Ljg4OSA0My4yNzM5SDE2MC4yNkwxNjMuMzYgMzEuODY5OUwxNjYuODMgNDMuMTc2NUwxNjYuODQ5IDQzLjI3MzlIMTc3LjAwNkwxNzAuOTYyIDI2LjYyNloiLz4KPHBhdGggZD0iTTgxLjUwNDUgMTQuMzQ0OEw4MS4wOTUxIDEyLjE0Mkg3Mi42MzQ3VjEyLjI3ODRDNzIuNjM0NyAxMi4yNzg0IDcyLjgyOTYgMTQuODEyNyA3Mi45ODU2IDE2LjE3NzJDNzMuMTYxIDE3Ljk5MDIgNzMuMTIyMSA0Mi43MjgxIDczLjEyMjEgNDIuOTgxNVY0My4zMzI0SDgyLjMwMzdWMzEuMDUxMkM4Mi4zMDM3IDMwLjAzNzUgODIuMzAzNyAyOC44Mjg5IDgyLjMwMzcgMjcuNjU5MkM4Mi4zMDM3IDI1LjM1ODkgODIuMzAzNyAyMy4xOTUxIDgyLjMwMzcgMjIuNjQ5M0M4Mi41Mzc3IDIwLjk3MjggODIuOTI3NiAyMC41MDQ5IDgzLjc2NTggMjAuMDU2NkM4NC42MDQgMTkuNjA4MiA4NS43MTUyIDE5LjMzNTMgODguNTgwOCAxOS45Mzk2SDg4LjczNjhWMTIuNDE0OUg4OC42MTk4Qzg2LjA5NTcgMTIuMjEwMyA4My41NzkzIDEyLjg5MjkgODEuNTA0NSAxNC4zNDQ4WiIvPgo8cGF0aCBkPSJNOS4wNjQ3MiAyMS43NTI1VjIwLjk3MjhDOS4wMDY4NiAyMC4yMDk4IDkuMDUyNzYgMTkuNDQyNiA5LjIwMTE4IDE4LjY5MkM5LjM3NjYyIDE4LjIwNDYgOS45MDI5NiAxNy45OTAyIDEwLjgzODcgMTcuOTkwMkMxMS43NzQ0IDE3Ljk5MDIgMTIuMzM5NyAxOC4yMDQ2IDEyLjQ5NTcgMTguNjcyNUMxMi42NDAxIDE5LjU0MTggMTIuNjg1OSAyMC40MjQ2IDEyLjYzMjEgMjEuMzA0MlY0My4zMzI0SDIxLjY5NjhWMjIuNDkzM0MyMS43NjA3IDIwLjUwMzQgMjEuNjMwMSAxOC41MTIxIDIxLjMwNyAxNi41NDc2QzIwLjk4MjEgMTUuMzQ0OSAyMC4yMjU3IDE0LjMwNCAxOS4xODIxIDEzLjYyMzVDMTcuOTU3MSAxMi43NjI1IDE2LjQ4NzcgMTIuMzE4MiAxNC45OTA5IDEyLjM1NjRDMTMuOTYzMyAxMi4zNTIgMTIuOTQ0NCAxMi41NDM5IDExLjk4ODggMTIuOTIxN0MxMS4xMDg5IDEzLjI3OTkgMTAuMjk3NiAxMy43ODc3IDkuNTkxMDYgMTQuNDIyOFYwLjQ0NTU3MkgwVjQzLjMzMjRIOS4xMDM3MVYyMS44ODlMOS4wNjQ3MiAyMS43NTI1WiIvPgo8cGF0aCBkPSJNNjAuNjY1NCAxNC4zMDU4QzU5Ljk3MDkgMTMuNjAxNSA1OS4xNTExIDEzLjAzMyA1OC4yNDgxIDEyLjYyOTNDNTcuMjM4MiAxMi4xOTg2IDU2LjE0ODggMTEuOTg2MSA1NS4wNTExIDEyLjAwNTVDNTMuNjY2NyAxMS45NzY5IDUyLjMwNjUgMTIuMzcxMyA1MS4xNTIzIDEzLjEzNjJDNTAuMTcyNSAxMy43NTM0IDQ5LjQzNTggMTQuNjg5OSA0OS4wNjY0IDE1Ljc4NzRDNDguNzAzOCAxNy40MzggNDguNTUzMiAxOS4xMjgxIDQ4LjYxODEgMjAuODE2OFYzNS4wODY0QzQ4LjU1ODkgMzYuNzM2MyA0OC43MDk1IDM4LjM4NyA0OS4wNjY0IDM5Ljk5ODlDNDkuNDM0MSA0MS4xMDIgNTAuMTYxOSA0Mi4wNDk0IDUxLjEzMjggNDIuNjg5MUM1Mi4yNDAyIDQzLjQ3OTQgNTMuNTczOSA0My44ODk4IDU0LjkzNDEgNDMuODU4N0M1Ni4wMTI5IDQzLjg1ODUgNTcuMDc4MiA0My42MTg4IDU4LjA1MzIgNDMuMTU3QzU5LjAzMTIgNDIuNjY1IDU5LjkxNTQgNDIuMDA1MiA2MC42NjU0IDQxLjIwNzZWNDMuMTU3SDcwLjE3ODRWMC40NDU1NzJINjAuNjI2NEw2MC42NjU0IDE0LjMwNThaTTYwLjY2NTQgMTcuMDkzNVYzOC4wM0M2MC42NDY2IDM4LjI2NTQgNjAuNTUzMyAzOC40ODg2IDYwLjM5OSAzOC42Njc0QzYwLjI0NDggMzguODQ2MSA2MC4wMzc3IDM4Ljk3MTEgNTkuODA3NiAzOS4wMjQySDU5LjYzMjJDNTkuMzA2OSAzOS4xMzAyIDU4Ljk2MTMgMzkuMTU5IDU4LjYyMjkgMzkuMTA4MkM1OC4yODQ2IDM5LjA1NzUgNTcuOTYyNyAzOC45Mjg2IDU3LjY4MjggMzguNzMxOEM1Ny41NzQyIDM4LjYzOTggNTcuNDg1MyAzOC41MjY3IDU3LjQyMTcgMzguMzk5NEM1Ny4zNTggMzguMjcyMSA1Ny4zMjA4IDM4LjEzMzIgNTcuMzEyNCAzNy45OTFWMTcuMTMyNUM1Ny4zMjY2IDE2Ljg0ODggNTcuNDUyOCAxNi41ODI0IDU3LjY2MzMgMTYuMzkxN0M1OC4wNTgyIDE2LjIwMDIgNTguNDkxNSAxNi4xMDA3IDU4LjkzMDQgMTYuMTAwN0M1OS4zNjkzIDE2LjEwMDcgNTkuODAyNSAxNi4yMDAyIDYwLjE5NzUgMTYuMzkxN0M2MC4zMjgyIDE2LjQ1NzkgNjAuNDM4NyAxNi41NTc5IDYwLjUxNzYgMTYuNjgxM0M2MC41OTY0IDE2LjgwNDcgNjAuNjQwNyAxNi45NDcxIDYwLjY0NTkgMTcuMDkzNUg2MC42NjU0WiIvPgo8cGF0aCBkPSJNMzUuOTQ3IDI3LjU2MTdMMzUuNDk4NiAyOS45MDFDMzUuNDk4NiAzMC4xMzUgMzUuNDk4NiAzMC4zNjg5IDM1LjM2MjEgMzAuNjAyOEMzNS4xNjcyIDI5LjY2NzEgMzQuOTUyOCAyOC42NTM0IDM0Ljc3NzMgMjcuODU0MkwzMS4wNTQgMTIuMzU2NEgyMS40NDM0TDMwLjQzMDIgNDAuNTgzOEMzMC41ODkxIDQxLjAyOTEgMzAuNjgxMSA0MS40OTU1IDMwLjcwMzEgNDEuOTY3OEMzMC42ODE2IDQyLjM3NDEgMzAuNTYxMiA0Mi43Njg5IDMwLjM1MjIgNDMuMTE4QzI5LjcwMDkgNDQuNTMzNCAyOC43MDE2IDQ1Ljc2MDcgMjcuNDQ3NiA0Ni42ODU0QzI2LjA3NTggNDcuODU2NCAyNC4zNTU4IDQ4LjU0MTYgMjIuNTU0NiA0OC42MzQ4SDBWNTYuNzI0OEgyNC4zNjc1QzI2LjE5MDQgNTYuNzc5NyAyOC4wMDUzIDU2LjQ2MjMgMjkuNzAxMyA1NS43OTE5QzMxLjM5NzMgNTUuMTIxNiAzMi45Mzg4IDU0LjExMjQgMzQuMjMxNSA1Mi44MjZDMzYuNzg1MiA0OS45NDA5IDM5LjEwNSA0NS42MTMyIDQyLjczMDkgMzIuODgzNkw0OC40NjIxIDEyLjM1NjRIMzguOTg4TDM1Ljk0NyAyNy41NjE3WiIvPgo8cGF0aCBkPSJNMTc3LjgwNSA0Ni41ODc5TDE3Ny4xNDIgNDcuMzQ4MkMxNzUuMDI5IDQ5LjczNjMgMTcyLjA5IDUxLjIzNDEgMTY4LjkxNiA1MS41Mzk0QzE2NC4zMzUgNTEuNTM5NCAxNjAuMDA3IDQ3LjE1MzIgMTU5Ljk2OCA0Ny4xMTQyTDE1OS41MiA0Ni42NjU5TDE1OS4wNzEgNDcuMjMxMkMxNTkuMDcxIDQ3LjIzMTIgMTU0Ljg0MSA1MS42NTY0IDE1MS4zOTEgNTEuNjU2NEMxNDguMTE2IDUxLjY1NjQgMTQyLjYzOCA0Ny4yMzEyIDE0Mi41OTkgNDcuMTcyN0wxNDIuMTUgNDYuODAyM0wxNDEuNzYgNDcuMjMxMkMxNDEuNzYgNDcuMjMxMiAxMzcuNjI4IDUxLjY1NjQgMTMzLjk2MyA1MS42NTY0QzEzMC4wNjQgNTEuNjU2NCAxMjUuNDI1IDQ3LjI1MDcgMTI1LjM4NiA0Ny4yMTE3TDEyNC45MzcgNDYuNzgyOUwxMjQuNTI4IDQ3LjI1MDdDMTI0LjUyOCA0Ny4yNTA3IDEyMC41MTIgNTEuNjU2NCAxMTYuNDc3IDUxLjY1NjRDMTEyLjM4MyA1MS42NTY0IDEwOC4xNTMgNDcuMjcwMiAxMDguMTE0IDQ3LjIzMTJMMTA3LjY4NSA0Ni43ODI5TDEwNy4yMzcgNDcuMjExN0MxMDcuMjM3IDQ3LjIxMTcgMTAyLjU1OCA1MS42NTY0IDk4Ljk3MTEgNTEuNjU2NEM5NS4zNDUyIDUxLjY1NjQgOTAuODQyMSA0Ny4yNzAyIDkwLjgwMzEgNDcuMjExN0w5MC4zNzQzIDQ2Ljc4MjlMODkuOTQ1NCA0Ny4yMTE3Qzg5Ljk0NTQgNDcuMjExNyA4NS41Mzk4IDUxLjYzNjkgODEuNDg1IDUxLjYzNjlDNzcuNTg2MiA1MS42MzY5IDczLjU3MDQgNDcuMjcwMiA3My41MzE0IDQ3LjIzMTJMNzMuMTAyNiA0Ni43NDM5TDcyLjYzNDcgNDcuMjExN0M3Mi42MzQ3IDQ3LjIxMTcgNjguMTUxMSA1MS42NTY0IDYzLjk3OTQgNTEuNjU2NEM1OS43ODgyIDUxLjY1NjQgNTYuMTgxOCA0Ny4zMDkyIDU2LjE4MTggNDcuMjcwMkw1NS44MTE0IDQ2LjgwMjNMNTUuMzQzNSA0Ny4xNTMyQzUzLjY2NyA0OC40MDA5IDQ4Ljc3NCA1MS42MzY5IDQ2LjM5NTggNTEuNjU2NEM0NC41NDU4IDUxLjU4NjcgNDIuNzU0IDUwLjk5MTcgNDEuMjI5OSA0OS45NDA5TDQwLjcyMyA0OS41NTFMMzcuODc2OSA1My42MDU4TDM4LjM4MzcgNTMuOTU2NkM0MC43NjI1IDU1LjU5MzMgNDMuNTIwOCA1Ni41OTMzIDQ2LjM5NTggNTYuODYxM0M0OS42MzE4IDU2Ljg2MTMgNTQuMTkzNCA1My41ODYzIDU1LjYxNjQgNTIuNDc1MUM1Ni43NDcxIDUzLjY2NDIgNjAuMTE5NiA1Ni44NjEzIDYzLjkwMTQgNTYuODYxM0M2Ny42MDUzIDU2Ljg2MTMgNzEuNjk5IDUzLjQzMDMgNzIuOTg1NiA1Mi4xODI3Qzc0LjI1MjcgNTMuNDMwMyA3Ny45OTU2IDU2Ljg2MTMgODEuNDA3IDU2Ljg2MTNDODQuOTE1OSA1Ni44NjEzIDg4Ljk5MDIgNTMuNTg2MyA5MC4yOTYzIDUyLjQ1NTZDOTEuNTgyOSA1My41ODYzIDk1LjU0MDIgNTYuODYxMyA5OC44OTMyIDU2Ljg2MTNDMTAyLjE2OCA1Ni44NjEzIDEwNi4yODEgNTMuNTg2MyAxMDcuNTg3IDUyLjQ1NTZDMTA4Ljg3NCA1My41ODYzIDExMi44OSA1Ni44NjEzIDExNi4zOTkgNTYuODYxM0MxMTkuODMgNTYuODYxMyAxMjMuNjUxIDUzLjQzMDMgMTI0LjkxOCA1Mi4xODI3QzEyNi4yNDMgNTMuNDEwOCAxMzAuMjc5IDU2Ljg2MTMgMTMzLjkwNCA1Ni44NjEzQzEzNy40OTEgNTYuODYxMyAxNDEgNTMuNzIyNyAxNDIuMjI4IDUyLjUxNDFDMTQ0LjY3MSA1NS4wMTQgMTQ3LjkyOCA1Ni41NTYyIDE1MS40MSA1Ni44NjEzQzE1My4wMiA1Ni43Njg2IDE1NC41OSA1Ni4zMjg1IDE1Ni4wMTMgNTUuNTcxNEMxNTcuNDM3IDU0LjgxNDMgMTU4LjY4IDUzLjc1OCAxNTkuNjU2IDUyLjQ3NTFDMTYxLjI1NSA1My41NjY4IDE2Ni4zMDMgNTYuODYxMyAxNjkuNTk4IDU2Ljg2MTNDMTczLjQ5NyA1Ni44NjEzIDE3OS4zNDUgNTIuNjExNiAxNzkuNjE4IDUyLjQzNjFMMTgwLjAwOCA1Mi4xNjMyTDE3Ny44MDUgNDYuNTg3OVoiLz4KPC9zdmc+Cg==") no-repeat left center/contain; }
+  header .sub { color:var(--mist); letter-spacing:.12em; text-transform:uppercase; font-size:13px; border-left:1px solid rgba(255,255,255,.25); padding-left:14px; }
+  main { max-width:760px; margin:0 auto; padding:24px 20px 60px; }
+  .step { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:16px; }
+  .step h2 { margin:0 0 4px; font-size:18px; color:var(--navy); display:flex; gap:10px; align-items:center; }
+  .num { width:28px; height:28px; border-radius:50%; background:var(--navy); color:#fff; display:inline-grid; place-items:center; font-size:14px; flex:none; }
+  .step p { margin:6px 0 14px; color:var(--muted); line-height:1.5; font-size:15px; }
+  .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .chosen { font-weight:600; color:var(--ink); }
+  .chosen.none { color:var(--muted); font-weight:400; font-style:italic; }
+  button { font:inherit; border:0; border-radius:10px; padding:11px 18px; background:var(--bg); color:var(--navy); font-weight:600; cursor:pointer; border:1px solid var(--line); }
+  button.primary { background:var(--blue); color:#fff; border-color:var(--blue); font-size:17px; padding:14px 26px; }
+  button:disabled { opacity:.5; cursor:default; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 0 6px; }
+  input[type=password], input[type=text] { width:100%; font:inherit; font-size:16px; padding:12px 14px; border:1px solid var(--mist); border-radius:10px; outline:none; }
+  input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(3,119,186,.2); }
+  .check { display:flex; gap:8px; align-items:center; margin-top:12px; color:var(--ink); font-size:15px; }
+  .hint { font-size:13px; color:var(--muted); margin-top:6px; }
+  .bar { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin:16px 0 8px; }
+  .bar > div { height:100%; width:0; background:var(--blue); transition:width .2s; }
+  #log { font-family:ui-monospace,Consolas,monospace; font-size:13px; background:#0B1022; color:#D5DBEA; border-radius:10px; padding:14px; max-height:280px; overflow:auto; white-space:pre-wrap; margin-top:12px; }
+  .msg { padding:14px 16px; border-radius:10px; margin-top:14px; font-size:15px; line-height:1.5; }
+  .msg.ok { background:#E7F6EE; color:#0E5C38; }
+  .msg.bad { background:#FDECEA; color:var(--bad); }
+  .msg.warn { background:#FFF4E0; color:#7A4A00; }
+  .unsupported { margin:40px auto; max-width:560px; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<header><span class="logo"></span><span class="sub">Field Kit Publisher</span></header>
+<main id="app">
+  <div class="step">
+    <h2><span class="num">1</span>Your files</h2>
+    <p>Choose your <b>iPad Files</b> folder (for example the one in your OneDrive). Each folder inside it becomes a tile in the app. Nothing in this folder is changed.</p>
+    <div class="row"><button id="pickSrc" type="button">Choose folder…</button><span id="srcName" class="chosen none">Not chosen</span></div>
+    <div id="srcMsg"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">2</span>GitHub folder</h2>
+    <p>Choose the <b>hydrolox-field-kit</b> folder that GitHub Desktop cloned to your PC. Encrypted files are written to its <code>data</code> folder.</p>
+    <div class="row"><button id="pickRepo" type="button">Choose folder…</button><span id="repoName" class="chosen none">Not chosen</span></div>
+    <div id="repoMsg"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">3</span>Team passcode</h2>
+    <p id="passHelp">Everyone enters this once on their tablet. Use something long you can share by phone, like <i>Intake-Screen-Harbor-42</i>.</p>
+    <label for="pass">Passcode</label>
+    <input id="pass" type="password" autocomplete="off">
+    <div id="confirmWrap" hidden>
+      <label for="pass2">Type it again</label>
+      <input id="pass2" type="password" autocomplete="off">
+      <div class="hint">At least 12 characters. If it's forgotten it can't be recovered – you'd just set a new one.</div>
+    </div>
+    <label class="check"><input type="checkbox" id="showPass"> Show passcode</label>
+    <label class="check" id="changeWrap" hidden><input type="checkbox" id="changePass"> Change the team passcode (everyone will need the new one)</label>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">4</span>Encrypt</h2>
+    <p>Only new or changed files are encrypted, so later updates are quick. When it's done, open <b>GitHub Desktop</b>, click <b>Commit to main</b>, then <b>Push origin</b>.</p>
+    <button id="run" class="primary" type="button" disabled>Encrypt &amp; prepare</button>
+    <div class="bar" id="barWrap" hidden><div id="bar"></div></div>
+    <div id="status"></div>
+    <div id="log" hidden></div>
+  </div>
+</main>
+
+<script>
+/* Hydrolox Field Kit – encryption format (shared by the app and Publisher.html)
+ *
+ * Key:   PBKDF2-SHA256(passcode, salt, ITER) -> AES-256-GCM key
+ * Blob:  header (24 bytes) + N encrypted chunks
+ *        header = "HLX1" | noncePrefix(8) | chunkSize u32 | totalSize u64   (big-endian)
+ *        chunk i = AES-GCM(plain[i]) with IV = noncePrefix | u32(i)
+ *                  and AAD = header | u32(i) | lastFlag(1 byte)
+ *        Header in the AAD authenticates sizes; lastFlag + counter stop truncation/reordering.
+ */
+
+const MAGIC = [0x48, 0x4c, 0x58, 0x31]; // "HLX1"
+const HEADER = 24;
+const CHUNK = 4 * 1024 * 1024;
+const ITER = 600000;
+
+const subtle = globalThis.crypto.subtle;
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+
+const b64 = {
+  to(bytes) { let s = ''; const b = new Uint8Array(bytes); for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); },
+  from(str) { const s = atob(str); const b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; },
+};
+const randomBytes = (n) => globalThis.crypto.getRandomValues(new Uint8Array(n));
+const randomId = () => Array.from(randomBytes(12), (x) => x.toString(16).padStart(2, '0')).join('');
+
+async function deriveKey(passcode, salt, iter = ITER, extractable = false) {
+  const base = await subtle.importKey('raw', enc.encode(passcode.normalize('NFC')), 'PBKDF2', false, ['deriveKey']);
+  return subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter }, base,
+    { name: 'AES-GCM', length: 256 }, extractable, ['encrypt', 'decrypt']);
+}
+
+function makeHeader(total, chunkSize = CHUNK) {
+  const h = new Uint8Array(HEADER);
+  h.set(MAGIC, 0);
+  h.set(randomBytes(8), 4);
+  const dv = new DataView(h.buffer);
+  dv.setUint32(12, chunkSize);
+  dv.setUint32(16, Math.floor(total / 2 ** 32));
+  dv.setUint32(20, total >>> 0);
+  return h;
+}
+function parseHeader(h) {
+  for (let i = 0; i < 4; i++) if (h[i] !== MAGIC[i]) throw new Error('Not an HLX1 file');
+  const dv = new DataView(h.buffer, h.byteOffset, HEADER);
+  const chunkSize = dv.getUint32(12);
+  const total = dv.getUint32(16) * 2 ** 32 + dv.getUint32(20);
+  const count = Math.max(1, Math.ceil(total / chunkSize));
+  return { chunkSize, total, count };
+}
+function ivFor(h, i) {
+  const iv = new Uint8Array(12);
+  iv.set(h.subarray(4, 12), 0);
+  new DataView(iv.buffer).setUint32(8, i);
+  return iv;
+}
+function aadFor(h, i, last) {
+  const a = new Uint8Array(HEADER + 5);
+  a.set(h.subarray(0, HEADER), 0);
+  const dv = new DataView(a.buffer);
+  dv.setUint32(HEADER, i);
+  a[HEADER + 4] = last ? 1 : 0;
+  return a;
+}
+
+/** Encrypt a Blob/File. `write(Uint8Array)` receives output in order. */
+async function encryptBlob(blob, key, write, onProgress) {
+  const total = blob.size;
+  const h = makeHeader(total);
+  const { count, chunkSize } = parseHeader(h);
+  await write(h);
+  for (let i = 0; i < count; i++) {
+    const start = i * chunkSize;
+    const plain = new Uint8Array(await blob.slice(start, Math.min(total, start + chunkSize)).arrayBuffer());
+    const ct = await subtle.encrypt({ name: 'AES-GCM', iv: ivFor(h, i), additionalData: aadFor(h, i, i === count - 1) }, key, plain);
+    await write(new Uint8Array(ct));
+    onProgress?.(Math.min(total, start + chunkSize), total);
+  }
+}
+
+/** Encrypt bytes in memory -> Uint8Array (used for small things: index, check value). */
+async function encryptBytes(bytes, key) {
+  const parts = [];
+  await encryptBlob(new Blob([bytes]), key, (p) => { parts.push(p); });
+  return new Uint8Array(await new Blob(parts).arrayBuffer());
+}
+
+/** Simple byte queue for streaming decryption. */
+class Queue {
+  constructor() { this.parts = []; this.length = 0; }
+  push(u8) { if (u8.length) { this.parts.push(u8); this.length += u8.length; } }
+  take(n) {
+    const out = new Uint8Array(n);
+    let off = 0;
+    while (off < n) {
+      const p = this.parts[0];
+      const need = n - off;
+      if (p.length <= need) { out.set(p, off); off += p.length; this.parts.shift(); }
+      else { out.set(p.subarray(0, need), off); this.parts[0] = p.subarray(need); off += need; }
+    }
+    this.length -= n;
+    return out;
+  }
+}
+
+/** Decrypt a ReadableStream (e.g. fetch response.body) into a new ReadableStream of plaintext.
+ *  Only one chunk is held in memory at a time, so large videos can stream straight into Cache Storage. */
+function decryptToStream(stream, key, onProgress) {
+  const reader = stream.getReader();
+  const q = new Queue();
+  let h = null, info = null, i = 0, done = false, produced = 0;
+  const pump = async () => {
+    const r = await reader.read();
+    if (r.done) done = true; else q.push(r.value instanceof Uint8Array ? r.value : new Uint8Array(r.value));
+  };
+  const need = async (n) => { while (q.length < n) { if (done) throw new Error('File is truncated'); await pump(); } };
+  return new ReadableStream({
+    async pull(ctrl) {
+      try {
+        if (!h) { await need(HEADER); h = q.take(HEADER); info = parseHeader(h); }
+        const plainLen = Math.min(info.chunkSize, info.total - i * info.chunkSize);
+        await need(plainLen + 16);
+        const ct = q.take(plainLen + 16);
+        const pt = await subtle.decrypt({ name: 'AES-GCM', iv: ivFor(h, i), additionalData: aadFor(h, i, i === info.count - 1) }, key, ct);
+        produced += pt.byteLength;
+        onProgress?.(produced, info.total);
+        if (pt.byteLength) ctrl.enqueue(new Uint8Array(pt));
+        i++;
+        if (i >= info.count) { ctrl.close(); reader.cancel().catch(() => {}); }
+      } catch (e) {
+        ctrl.error(e);
+        reader.cancel().catch(() => {});
+      }
+    },
+    cancel() { reader.cancel().catch(() => {}); },
+  });
+}
+
+/** Decrypt a ReadableStream fully into memory. Returns array of plaintext Uint8Array parts. */
+async function decryptStream(stream, key, onProgress) {
+  const r = decryptToStream(stream, key, onProgress).getReader();
+  const out = [];
+  for (;;) { const { done, value } = await r.read(); if (done) break; out.push(value); }
+  return out;
+}
+
+async function decryptBytes(bytes, key) {
+  const parts = await decryptStream(new Blob([bytes]).stream(), key);
+  return new Uint8Array(await new Blob(parts).arrayBuffer());
+}
+
+async function encryptJSON(obj, key) { return encryptBytes(enc.encode(JSON.stringify(obj)), key); }
+async function decryptJSON(bytes, key) { return JSON.parse(dec.decode(await decryptBytes(bytes, key))); }
+
+/* ---- key.json helpers ---- */
+const CHECK = 'hydrolox-field-kit-ok';
+
+async function createKeyInfo(passcode) {
+  const salt = randomBytes(16);
+  const key = await deriveKey(passcode, salt);
+  const check = await encryptBytes(enc.encode(CHECK), key);
+  return { info: { v: 1, kid: randomId(), salt: b64.to(salt), iter: ITER, check: b64.to(check) }, key };
+}
+
+/** Returns the CryptoKey if the passcode is right, otherwise null. */
+async function unlockKeyInfo(info, passcode, extractable = false) {
+  const key = await deriveKey(passcode, b64.from(info.salt), info.iter, extractable);
+  try {
+    const plain = await decryptBytes(b64.from(info.check), key);
+    return dec.decode(plain) === CHECK ? key : null;
+  } catch { return null; }
+}
+
+
+const MAX_FILE = 100 * 1024 * 1024 - 64 * 1024; // keep encrypted file under GitHub's 100 MB limit
+const SKIP = new Set(['.ds_store', 'thumbs.db', 'desktop.ini', '.gitkeep', '.keep']);
+const MIME = { mp4:'video/mp4', m4v:'video/mp4', mov:'video/quicktime', webm:'video/webm', pdf:'application/pdf',
+  jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', gif:'image/gif', webp:'image/webp', svg:'image/svg+xml', heic:'image/heic',
+  ppt:'application/vnd.ms-powerpoint', pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  doc:'application/msword', docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls:'application/vnd.ms-excel', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  key:'application/vnd.apple.keynote', zip:'application/zip', txt:'text/plain' };
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n < 1e6 ? Math.max(1, Math.round(n / 1e3)) + ' KB' : n < 1e9 ? (n / 1e6).toFixed(1) + ' MB' : (n / 1e9).toFixed(2) + ' GB';
+const st = { src: null, repo: null, keyInfo: null };
+
+if (!window.showDirectoryPicker) {
+  $('app').innerHTML = '<div class="unsupported"><h2>Please open this in Microsoft Edge or Google Chrome</h2>This tool needs to read and write folders on your PC, which only Edge and Chrome on Windows/Mac support.</div>';
+}
+
+/* --- remember chosen folders between visits --- */
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('hlx-publisher', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('h');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function saveHandle(k, h) { try { const db = await idb(); db.transaction('h', 'readwrite').objectStore('h').put(h, k); } catch {} }
+async function loadHandle(k) {
+  try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('h').objectStore('h').get(k); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); }
+  catch { return null; }
+}
+
+function show(id, h) { const el = $(id); el.textContent = h ? h.name : 'Not chosen'; el.classList.toggle('none', !h); }
+function ready() { $('run').disabled = !(st.src && st.repo); }
+
+async function readKeyInfo() {
+  st.keyInfo = null;
+  try {
+    const data = await st.repo.getDirectoryHandle('data');
+    const f = await (await data.getFileHandle('key.json')).getFile();
+    st.keyInfo = JSON.parse(await f.text());
+  } catch {}
+  const first = !st.keyInfo;
+  $('confirmWrap').hidden = !first;
+  $('changeWrap').hidden = first;
+  $('passHelp').innerHTML = first
+    ? 'First publish: choose the team passcode. Everyone enters it once on their tablet. Use something long you can share by phone, like <i>Intake-Screen-Harbor-42</i>.'
+    : 'Enter the current team passcode.';
+}
+$('changePass').addEventListener('change', () => {
+  $('confirmWrap').hidden = !$('changePass').checked && !!st.keyInfo;
+  $('passHelp').textContent = $('changePass').checked ? 'Enter the NEW team passcode. All files will be re-encrypted with it.' : 'Enter the current team passcode.';
+});
+$('showPass').addEventListener('change', (e) => { $('pass').type = $('pass2').type = e.target.checked ? 'text' : 'password'; });
+
+function note(id, kind, html) { $(id).innerHTML = kind ? `<div class="msg ${kind}">${html}</div>` : ''; }
+async function hasEntry(dir, name, kind) {
+  try { kind === 'file' ? await dir.getFileHandle(name) : await dir.getDirectoryHandle(name); return true; } catch { return false; }
+}
+async function listNames(dir, max = 8) {
+  const out = [];
+  try { for await (const [n] of dir.entries()) { out.push(n); if (out.length >= max) break; } } catch {}
+  return out;
+}
+function pickError(id, e) {
+  if (e && e.name === 'AbortError') return; // user closed the picker
+  const msg = e && e.name === 'SecurityError'
+    ? 'Edge won\'t allow access to that folder (system folders such as Documents, Desktop or the drive root are blocked). Choose the folder itself, not the folder above it.'
+    : `Couldn't open that folder${e && e.message ? ': ' + e.message : ''}.`;
+  note(id, 'bad', msg);
+}
+
+$('pickSrc').addEventListener('click', async () => {
+  note('srcMsg');
+  let h;
+  try { h = await showDirectoryPicker({ id: 'hlx-src', mode: 'read' }); } catch (e) { return pickError('srcMsg', e); }
+  const names = await listNames(h, 50);
+  const folders = [];
+  for await (const [n, c] of h.entries()) if (c.kind === 'directory' && !n.startsWith('.')) folders.push(n);
+  st.src = h; show('srcName', h); saveHandle('src', h); ready();
+  if (!names.length) note('srcMsg', 'warn', `“${h.name}” is empty. Choose the folder that contains Animations, Case Studies, Installation Videos.`);
+  else note('srcMsg', 'ok', `Found ${folders.length} folder${folders.length === 1 ? '' : 's'}: ${folders.slice(0, 6).join(', ')}${folders.length > 6 ? '…' : ''}`);
+});
+
+$('pickRepo').addEventListener('click', async () => {
+  note('repoMsg');
+  let h;
+  try { h = await showDirectoryPicker({ id: 'hlx-repo', mode: 'readwrite' }); } catch (e) { return pickError('repoMsg', e); }
+  try {
+    if (!(await hasEntry(h, 'app'))) {
+      // Common mistake: the zip's own folder was copied inside the cloned folder.
+      let nested = null;
+      for await (const [n, c] of h.entries()) if (c.kind === 'directory' && await hasEntry(c, 'app') && await hasEntry(c, 'Publisher.html', 'file')) { nested = n; break; }
+      if (nested) {
+        note('repoMsg', 'bad', `The app files are one level too deep: they're inside <b>${h.name}\\${nested}</b>.<br>
+          Open <b>${h.name}\\${nested}</b> in File Explorer, select everything in it (Ctrl+A, and make sure the <b>.github</b> folder is included), and move it up into <b>${h.name}</b>. Then delete the now-empty inner <b>${nested}</b> folder and choose <b>${h.name}</b> again.`);
+      } else {
+        const names = await listNames(h);
+        note('repoMsg', 'bad', `“${h.name}” doesn't look like the hydrolox-field-kit folder – there's no <b>app</b> folder inside it.<br>
+          It contains: ${names.length ? names.join(', ') : '(nothing)'}.<br>Choose the folder GitHub Desktop cloned (in GitHub Desktop: <b>Repository → Show in Explorer</b> shows where it is), and make sure you copied the contents of the zip into it.`);
+      }
+      return;
+    }
+    const warnings = [];
+    if (!(await hasEntry(h, '.git'))) warnings.push('This folder isn\'t a GitHub Desktop clone (no hidden <b>.git</b> folder), so GitHub Desktop won\'t see changes here. Use <b>Repository → Show in Explorer</b> in GitHub Desktop to find the right folder.');
+    if (!(await hasEntry(h, '.github'))) warnings.push('The <b>.github</b> folder is missing, so GitHub won\'t publish the site. Copy the <b>.github</b> folder from the zip into this folder.');
+    st.repo = h; show('repoName', h); saveHandle('repo', h); status(); await readKeyInfo(); ready();
+    note('repoMsg', warnings.length ? 'warn' : 'ok', warnings.length ? warnings.join('<br><br>') : (st.keyInfo ? 'Looks good. Existing passcode found – enter it below.' : 'Looks good. This is the first publish – create a passcode below.'));
+  } catch (e) { pickError('repoMsg', e); }
+});
+
+(async () => {
+  const s = await loadHandle('src'), r = await loadHandle('repo');
+  if (s) { st.src = s; show('srcName', s); }
+  if (r) { st.repo = r; show('repoName', r); if ((await r.queryPermission({ mode: 'readwrite' })) === 'granted') await readKeyInfo(); else { $('confirmWrap').hidden = true; } }
+  ready();
+})();
+
+/* --- UI helpers --- */
+function status(kind, html) { $('status').innerHTML = kind ? `<div class="msg ${kind}">${html}</div>` : ''; }
+function log(line) { const l = $('log'); l.hidden = false; l.textContent += line + '\n'; l.scrollTop = l.scrollHeight; }
+function progress(f) { $('barWrap').hidden = f == null; $('bar').style.width = Math.round((f || 0) * 100) + '%'; }
+
+async function walk(dir, rel, out) {
+  for await (const [name, h] of dir.entries()) {
+    if (name.startsWith('.') || name.startsWith('~$') || SKIP.has(name.toLowerCase())) continue;
+    const p = rel ? rel + '/' + name : name;
+    if (h.kind === 'directory') { out.folders.push(p); await walk(h, p, out); }
+    else out.files.push({ p, handle: h });
+  }
+  return out;
+}
+
+$('run').addEventListener('click', async () => {
+  const pass = $('pass').value;
+  $('log').textContent = ''; $('log').hidden = true; status();
+  if (!pass) return status('bad', 'Enter the team passcode.');
+  try {
+    if ((await st.src.requestPermission({ mode: 'read' })) !== 'granted') return status('bad', 'Permission to read your files folder was not given.');
+    if ((await st.repo.requestPermission({ mode: 'readwrite' })) !== 'granted') return status('bad', 'Permission to write to the GitHub folder was not given.');
+  } catch (e) { return status('bad', 'Please choose both folders again.'); }
+  await readKeyInfo();
+  const hadKey = !!st.keyInfo;
+  const changingNow = !hadKey || $('changePass').checked;
+  if (changingNow) {
+    if (pass.length < 12) return status('bad', 'Use at least 12 characters for the passcode.');
+    if (pass !== $('pass2').value) { $('confirmWrap').hidden = false; return status('bad', 'The two passcodes don\'t match.'); }
+  }
+
+  $('run').disabled = true;
+  try {
+    const data = await st.repo.getDirectoryHandle('data', { create: true });
+    let key, keyInfo = st.keyInfo, fresh = false;
+    status('warn', 'Checking passcode…');
+    if (changingNow) {
+      const made = await createKeyInfo(pass);
+      key = made.key; keyInfo = made.info; fresh = true;
+    } else {
+      key = await unlockKeyInfo(keyInfo, pass);
+      if (!key) { status('bad', 'That passcode is wrong. To set a new one, tick “Change the team passcode”.'); return; }
+    }
+
+    // previous index (to skip unchanged files)
+    const prev = new Map();
+    if (!fresh) {
+      try {
+        const f = await (await data.getFileHandle('index.bin')).getFile();
+        const idx = await decryptJSON(new Uint8Array(await f.arrayBuffer()), key);
+        for (const e of idx.files) prev.set(e.p, e);
+      } catch {}
+    }
+    const existing = new Set();
+    for await (const [name, h] of data.entries()) if (h.kind === 'file' && name.endsWith('.bin') && name !== 'index.bin') existing.add(name);
+
+    status('warn', 'Reading your files…');
+    const scan = await walk(st.src, '', { files: [], folders: [] });
+    const entries = [], tooBig = [], work = [];
+    for (const it of scan.files) {
+      const file = await it.handle.getFile();
+      if (file.size > MAX_FILE) { tooBig.push(it.p + ' (' + fmt(file.size) + ')'); continue; }
+      const ext = (it.p.split('.').pop() || '').toLowerCase();
+      const old = prev.get(it.p);
+      const e = { p: it.p, s: file.size, m: file.lastModified, t: MIME[ext] || file.type || 'application/octet-stream' };
+      if (old && old.s === e.s && old.m === e.m && existing.has(old.id + '.bin')) { e.id = old.id; entries.push(e); }
+      else { e.id = randomId(); work.push({ e, file, isNew: !old }); }
+    }
+
+    const totalBytes = work.reduce((a, w) => a + w.file.size, 0) || 1;
+    let done = 0, added = 0, updated = 0;
+    progress(0);
+    for (const w of work) {
+      status('warn', `Encrypting ${work.indexOf(w) + 1} of ${work.length}: ${w.e.p}`);
+      const fh = await data.getFileHandle(w.e.id + '.bin', { create: true });
+      const out = await fh.createWritable();
+      try {
+        const base = done;
+        await encryptBlob(w.file, key, (chunk) => out.write(chunk), (n) => progress((base + n) / totalBytes));
+        await out.close();
+      } catch (err) { try { await out.abort(); } catch {} throw err; }
+      done += w.file.size;
+      entries.push(w.e);
+      w.isNew ? added++ : updated++;
+      log((w.isNew ? '+ added    ' : '~ updated  ') + w.e.p + '  (' + fmt(w.e.s) + ')');
+    }
+
+    const index = { v: 1, generated: new Date().toISOString(), folders: scan.folders.sort(), files: entries.sort((a, b) => a.p.localeCompare(b.p)) };
+    const idxBytes = await encryptJSON(index, key);
+    let w = await (await data.getFileHandle('index.bin', { create: true })).createWritable();
+    await w.write(idxBytes); await w.close();
+    if (fresh) {
+      w = await (await data.getFileHandle('key.json', { create: true })).createWritable();
+      await w.write(JSON.stringify(keyInfo, null, 2)); await w.close();
+    }
+
+    // remove encrypted files that are no longer used
+    const keep = new Set(entries.map((e) => e.id + '.bin'));
+    for (const name of existing) if (!keep.has(name)) await data.removeEntry(name);
+    let removed = 0;
+    for (const p of prev.keys()) if (!index.files.some((e) => e.p === p)) { log('- removed  ' + p); removed++; }
+
+    progress(null);
+    st.keyInfo = keyInfo; $('changePass').checked = false; $('confirmWrap').hidden = true; $('changeWrap').hidden = false;
+    const lib = entries.reduce((a, e) => a + e.s, 0);
+    let html = `<b>Done.</b> ${entries.length} files (${fmt(lib)}) are encrypted and ready. ${fresh && hadKey ? 'All files were re-encrypted with the new passcode.' : `${added} added, ${updated} updated, ${removed} removed.`}<br>
+      Now open <b>GitHub Desktop</b> → <b>Commit to main</b> → <b>Push origin</b>. Tablets update next time they open the app online.`;
+    if (fresh && !hadKey) html += '<br><br>Share the passcode with your team by phone or Teams — not in the same message as the link.';
+    if (fresh && hadKey) html += '<br><br><b>Passcode changed.</b> Everyone will be asked for the new one when they next open the app online.';
+    status('ok', html);
+    if (tooBig.length) status('warn', html + '<br><br><b>Skipped (over 100 MB – compress with HandBrake):</b><br>' + tooBig.join('<br>'));
+    if (!added && !updated && !removed && !fresh) log('No changes since the last publish.');
+  } catch (err) {
+    console.error(err);
+    progress(null);
+    status('bad', 'Something went wrong: ' + (err && err.message ? err.message : err) + '. Nothing was published; you can run it again.');
+  } finally {
+    $('run').disabled = false;
+  }
+});
+</script>
+</body>
+</html>

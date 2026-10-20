@@ -1,0 +1,15 @@
+{
+  "name": "Hydrolox Field Kit",
+  "short_name": "Hydrolox",
+  "description": "Offline sales and installation content for the Hydrolox team.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000F3D",
+  "theme_color": "#000F3D",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

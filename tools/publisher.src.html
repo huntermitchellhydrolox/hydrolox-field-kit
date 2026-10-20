@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydrolox Field Kit Publisher</title>
+<style>
+  :root { --navy:#000F3D; --blue:#0377BA; --mist:#C7CCDC; --bg:#F3F5F9; --ink:#0B1430; --muted:#5B6680; --line:#E1E5EE; --ok:#1E8E5A; --bad:#B42318; --warn:#B26A00;
+    font-family:"Neue Helvetica","Helvetica Neue",-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color-scheme: light; }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--ink); }
+  header { background:var(--navy); color:#fff; padding:20px 28px; display:flex; align-items:center; gap:14px; }
+  header .logo { width:124px; height:39px; background:#fff; -webkit-mask:url("data:image/svg+xml;base64,__LOGO__") no-repeat left center/contain; mask:url("data:image/svg+xml;base64,__LOGO__") no-repeat left center/contain; }
+  header .sub { color:var(--mist); letter-spacing:.12em; text-transform:uppercase; font-size:13px; border-left:1px solid rgba(255,255,255,.25); padding-left:14px; }
+  main { max-width:760px; margin:0 auto; padding:24px 20px 60px; }
+  .step { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:16px; }
+  .step h2 { margin:0 0 4px; font-size:18px; color:var(--navy); display:flex; gap:10px; align-items:center; }
+  .num { width:28px; height:28px; border-radius:50%; background:var(--navy); color:#fff; display:inline-grid; place-items:center; font-size:14px; flex:none; }
+  .step p { margin:6px 0 14px; color:var(--muted); line-height:1.5; font-size:15px; }
+  .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .chosen { font-weight:600; color:var(--ink); }
+  .chosen.none { color:var(--muted); font-weight:400; font-style:italic; }
+  button { font:inherit; border:0; border-radius:10px; padding:11px 18px; background:var(--bg); color:var(--navy); font-weight:600; cursor:pointer; border:1px solid var(--line); }
+  button.primary { background:var(--blue); color:#fff; border-color:var(--blue); font-size:17px; padding:14px 26px; }
+  button:disabled { opacity:.5; cursor:default; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 0 6px; }
+  input[type=password], input[type=text] { width:100%; font:inherit; font-size:16px; padding:12px 14px; border:1px solid var(--mist); border-radius:10px; outline:none; }
+  input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(3,119,186,.2); }
+  .check { display:flex; gap:8px; align-items:center; margin-top:12px; color:var(--ink); font-size:15px; }
+  .hint { font-size:13px; color:var(--muted); margin-top:6px; }
+  .bar { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin:16px 0 8px; }
+  .bar > div { height:100%; width:0; background:var(--blue); transition:width .2s; }
+  #log { font-family:ui-monospace,Consolas,monospace; font-size:13px; background:#0B1022; color:#D5DBEA; border-radius:10px; padding:14px; max-height:280px; overflow:auto; white-space:pre-wrap; margin-top:12px; }
+  .msg { padding:14px 16px; border-radius:10px; margin-top:14px; font-size:15px; line-height:1.5; }
+  .msg.ok { background:#E7F6EE; color:#0E5C38; }
+  .msg.bad { background:#FDECEA; color:var(--bad); }
+  .msg.warn { background:#FFF4E0; color:#7A4A00; }
+  .unsupported { margin:40px auto; max-width:560px; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<header><span class="logo"></span><span class="sub">Field Kit Publisher</span></header>
+<main id="app">
+  <div class="step">
+    <h2><span class="num">1</span>Your files</h2>
+    <p>Choose your <b>iPad Files</b> folder (for example the one in your OneDrive). Each folder inside it becomes a tile in the app. Nothing in this folder is changed.</p>
+    <div class="row"><button id="pickSrc" type="button">Choose folder…</button><span id="srcName" class="chosen none">Not chosen</span></div>
+    <div id="srcMsg"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">2</span>GitHub folder</h2>
+    <p>Choose the <b>hydrolox-field-kit</b> folder that GitHub Desktop cloned to your PC. Encrypted files are written to its <code>data</code> folder.</p>
+    <div class="row"><button id="pickRepo" type="button">Choose folder…</button><span id="repoName" class="chosen none">Not chosen</span></div>
+    <div id="repoMsg"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">3</span>Team passcode</h2>
+    <p id="passHelp">Everyone enters this once on their tablet. Use something long you can share by phone, like <i>Intake-Screen-Harbor-42</i>.</p>
+    <label for="pass">Passcode</label>
+    <input id="pass" type="password" autocomplete="off">
+    <div id="confirmWrap" hidden>
+      <label for="pass2">Type it again</label>
+      <input id="pass2" type="password" autocomplete="off">
+      <div class="hint">At least 12 characters. If it's forgotten it can't be recovered – you'd just set a new one.</div>
+    </div>
+    <label class="check"><input type="checkbox" id="showPass"> Show passcode</label>
+    <label class="check" id="changeWrap" hidden><input type="checkbox" id="changePass"> Change the team passcode (everyone will need the new one)</label>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">4</span>Encrypt</h2>
+    <p>Only new or changed files are encrypted, so later updates are quick. When it's done, open <b>GitHub Desktop</b>, click <b>Commit to main</b>, then <b>Push origin</b>.</p>
+    <button id="run" class="primary" type="button" disabled>Encrypt &amp; prepare</button>
+    <div class="bar" id="barWrap" hidden><div id="bar"></div></div>
+    <div id="status"></div>
+    <div id="log" hidden></div>
+  </div>
+</main>
+
+<script>
+/*HLXCRYPTO*/
+
+const MAX_FILE = 100 * 1024 * 1024 - 64 * 1024; // keep encrypted file under GitHub's 100 MB limit
+const SKIP = new Set(['.ds_store', 'thumbs.db', 'desktop.ini', '.gitkeep', '.keep']);
+const MIME = { mp4:'video/mp4', m4v:'video/mp4', mov:'video/quicktime', webm:'video/webm', pdf:'application/pdf',
+  jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', gif:'image/gif', webp:'image/webp', svg:'image/svg+xml', heic:'image/heic',
+  ppt:'application/vnd.ms-powerpoint', pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  doc:'application/msword', docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls:'application/vnd.ms-excel', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  key:'application/vnd.apple.keynote', zip:'application/zip', txt:'text/plain' };
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n < 1e6 ? Math.max(1, Math.round(n / 1e3)) + ' KB' : n < 1e9 ? (n / 1e6).toFixed(1) + ' MB' : (n / 1e9).toFixed(2) + ' GB';
+const st = { src: null, repo: null, keyInfo: null };
+
+if (!window.showDirectoryPicker) {
+  $('app').innerHTML = '<div class="unsupported"><h2>Please open this in Microsoft Edge or Google Chrome</h2>This tool needs to read and write folders on your PC, which only Edge and Chrome on Windows/Mac support.</div>';
+}
+
+/* --- remember chosen folders between visits --- */
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('hlx-publisher', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('h');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function saveHandle(k, h) { try { const db = await idb(); db.transaction('h', 'readwrite').objectStore('h').put(h, k); } catch {} }
+async function loadHandle(k) {
+  try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('h').objectStore('h').get(k); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); }
+  catch { return null; }
+}
+
+function show(id, h) { const el = $(id); el.textContent = h ? h.name : 'Not chosen'; el.classList.toggle('none', !h); }
+function ready() { $('run').disabled = !(st.src && st.repo); }
+
+async function readKeyInfo() {
+  st.keyInfo = null;
+  try {
+    const data = await st.repo.getDirectoryHandle('data');
+    const f = await (await data.getFileHandle('key.json')).getFile();
+    st.keyInfo = JSON.parse(await f.text());
+  } catch {}
+  const first = !st.keyInfo;
+  $('confirmWrap').hidden = !first;
+  $('changeWrap').hidden = first;
+  $('passHelp').innerHTML = first
+    ? 'First publish: choose the team passcode. Everyone enters it once on their tablet. Use something long you can share by phone, like <i>Intake-Screen-Harbor-42</i>.'
+    : 'Enter the current team passcode.';
+}
+$('changePass').addEventListener('change', () => {
+  $('confirmWrap').hidden = !$('changePass').checked && !!st.keyInfo;
+  $('passHelp').textContent = $('changePass').checked ? 'Enter the NEW team passcode. All files will be re-encrypted with it.' : 'Enter the current team passcode.';
+});
+$('showPass').addEventListener('change', (e) => { $('pass').type = $('pass2').type = e.target.checked ? 'text' : 'password'; });
+
+function note(id, kind, html) { $(id).innerHTML = kind ? `<div class="msg ${kind}">${html}</div>` : ''; }
+async function hasEntry(dir, name, kind) {
+  try { kind === 'file' ? await dir.getFileHandle(name) : await dir.getDirectoryHandle(name); return true; } catch { return false; }
+}
+async function listNames(dir, max = 8) {
+  const out = [];
+  try { for await (const [n] of dir.entries()) { out.push(n); if (out.length >= max) break; } } catch {}
+  return out;
+}
+function pickError(id, e) {
+  if (e && e.name === 'AbortError') return; // user closed the picker
+  const msg = e && e.name === 'SecurityError'
+    ? 'Edge won\'t allow access to that folder (system folders such as Documents, Desktop or the drive root are blocked). Choose the folder itself, not the folder above it.'
+    : `Couldn't open that folder${e && e.message ? ': ' + e.message : ''}.`;
+  note(id, 'bad', msg);
+}
+
+$('pickSrc').addEventListener('click', async () => {
+  note('srcMsg');
+  let h;
+  try { h = await showDirectoryPicker({ id: 'hlx-src', mode: 'read' }); } catch (e) { return pickError('srcMsg', e); }
+  const names = await listNames(h, 50);
+  const folders = [];
+  for await (const [n, c] of h.entries()) if (c.kind === 'directory' && !n.startsWith('.')) folders.push(n);
+  st.src = h; show('srcName', h); saveHandle('src', h); ready();
+  if (!names.length) note('srcMsg', 'warn', `“${h.name}” is empty. Choose the folder that contains Animations, Case Studies, Installation Videos.`);
+  else note('srcMsg', 'ok', `Found ${folders.length} folder${folders.length === 1 ? '' : 's'}: ${folders.slice(0, 6).join(', ')}${folders.length > 6 ? '…' : ''}`);
+});
+
+$('pickRepo').addEventListener('click', async () => {
+  note('repoMsg');
+  let h;
+  try { h = await showDirectoryPicker({ id: 'hlx-repo', mode: 'readwrite' }); } catch (e) { return pickError('repoMsg', e); }
+  try {
+    if (!(await hasEntry(h, 'app'))) {
+      // Common mistake: the zip's own folder was copied inside the cloned folder.
+      let nested = null;
+      for await (const [n, c] of h.entries()) if (c.kind === 'directory' && await hasEntry(c, 'app') && await hasEntry(c, 'Publisher.html', 'file')) { nested = n; break; }
+      if (nested) {
+        note('repoMsg', 'bad', `The app files are one level too deep: they're inside <b>${h.name}\\${nested}</b>.<br>
+          Open <b>${h.name}\\${nested}</b> in File Explorer, select everything in it (Ctrl+A, and make sure the <b>.github</b> folder is included), and move it up into <b>${h.name}</b>. Then delete the now-empty inner <b>${nested}</b> folder and choose <b>${h.name}</b> again.`);
+      } else {
+        const names = await listNames(h);
+        note('repoMsg', 'bad', `“${h.name}” doesn't look like the hydrolox-field-kit folder – there's no <b>app</b> folder inside it.<br>
+          It contains: ${names.length ? names.join(', ') : '(nothing)'}.<br>Choose the folder GitHub Desktop cloned (in GitHub Desktop: <b>Repository → Show in Explorer</b> shows where it is), and make sure you copied the contents of the zip into it.`);
+      }
+      return;
+    }
+    const warnings = [];
+    if (!(await hasEntry(h, '.git'))) warnings.push('This folder isn\'t a GitHub Desktop clone (no hidden <b>.git</b> folder), so GitHub Desktop won\'t see changes here. Use <b>Repository → Show in Explorer</b> in GitHub Desktop to find the right folder.');
+    if (!(await hasEntry(h, '.github'))) warnings.push('The <b>.github</b> folder is missing, so GitHub won\'t publish the site. Copy the <b>.github</b> folder from the zip into this folder.');
+    st.repo = h; show('repoName', h); saveHandle('repo', h); status(); await readKeyInfo(); ready();
+    note('repoMsg', warnings.length ? 'warn' : 'ok', warnings.length ? warnings.join('<br><br>') : (st.keyInfo ? 'Looks good. Existing passcode found – enter it below.' : 'Looks good. This is the first publish – create a passcode below.'));
+  } catch (e) { pickError('repoMsg', e); }
+});
+
+(async () => {
+  const s = await loadHandle('src'), r = await loadHandle('repo');
+  if (s) { st.src = s; show('srcName', s); }
+  if (r) { st.repo = r; show('repoName', r); if ((await r.queryPermission({ mode: 'readwrite' })) === 'granted') await readKeyInfo(); else { $('confirmWrap').hidden = true; } }
+  ready();
+})();
+
+/* --- UI helpers --- */
+function status(kind, html) { $('status').innerHTML = kind ? `<div class="msg ${kind}">${html}</div>` : ''; }
+function log(line) { const l = $('log'); l.hidden = false; l.textContent += line + '\n'; l.scrollTop = l.scrollHeight; }
+function progress(f) { $('barWrap').hidden = f == null; $('bar').style.width = Math.round((f || 0) * 100) + '%'; }
+
+async function walk(dir, rel, out) {
+  for await (const [name, h] of dir.entries()) {
+    if (name.startsWith('.') || name.startsWith('~$') || SKIP.has(name.toLowerCase())) continue;
+    const p = rel ? rel + '/' + name : name;
+    if (h.kind === 'directory') { out.folders.push(p); await walk(h, p, out); }
+    else out.files.push({ p, handle: h });
+  }
+  return out;
+}
+
+$('run').addEventListener('click', async () => {
+  const pass = $('pass').value;
+  $('log').textContent = ''; $('log').hidden = true; status();
+  if (!pass) return status('bad', 'Enter the team passcode.');
+  try {
+    if ((await st.src.requestPermission({ mode: 'read' })) !== 'granted') return status('bad', 'Permission to read your files folder was not given.');
+    if ((await st.repo.requestPermission({ mode: 'readwrite' })) !== 'granted') return status('bad', 'Permission to write to the GitHub folder was not given.');
+  } catch (e) { return status('bad', 'Please choose both folders again.'); }
+  await readKeyInfo();
+  const hadKey = !!st.keyInfo;
+  const changingNow = !hadKey || $('changePass').checked;
+  if (changingNow) {
+    if (pass.length < 12) return status('bad', 'Use at least 12 characters for the passcode.');
+    if (pass !== $('pass2').value) { $('confirmWrap').hidden = false; return status('bad', 'The two passcodes don\'t match.'); }
+  }
+
+  $('run').disabled = true;
+  try {
+    const data = await st.repo.getDirectoryHandle('data', { create: true });
+    let key, keyInfo = st.keyInfo, fresh = false;
+    status('warn', 'Checking passcode…');
+    if (changingNow) {
+      const made = await createKeyInfo(pass);
+      key = made.key; keyInfo = made.info; fresh = true;
+    } else {
+      key = await unlockKeyInfo(keyInfo, pass);
+      if (!key) { status('bad', 'That passcode is wrong. To set a new one, tick “Change the team passcode”.'); return; }
+    }
+
+    // previous index (to skip unchanged files)
+    const prev = new Map();
+    if (!fresh) {
+      try {
+        const f = await (await data.getFileHandle('index.bin')).getFile();
+        const idx = await decryptJSON(new Uint8Array(await f.arrayBuffer()), key);
+        for (const e of idx.files) prev.set(e.p, e);
+      } catch {}
+    }
+    const existing = new Set();
+    for await (const [name, h] of data.entries()) if (h.kind === 'file' && name.endsWith('.bin') && name !== 'index.bin') existing.add(name);
+
+    status('warn', 'Reading your files…');
+    const scan = await walk(st.src, '', { files: [], folders: [] });
+    const entries = [], tooBig = [], work = [];
+    for (const it of scan.files) {
+      const file = await it.handle.getFile();
+      if (file.size > MAX_FILE) { tooBig.push(it.p + ' (' + fmt(file.size) + ')'); continue; }
+      const ext = (it.p.split('.').pop() || '').toLowerCase();
+      const old = prev.get(it.p);
+      const e = { p: it.p, s: file.size, m: file.lastModified, t: MIME[ext] || file.type || 'application/octet-stream' };
+      if (old && old.s === e.s && old.m === e.m && existing.has(old.id + '.bin')) { e.id = old.id; entries.push(e); }
+      else { e.id = randomId(); work.push({ e, file, isNew: !old }); }
+    }
+
+    const totalBytes = work.reduce((a, w) => a + w.file.size, 0) || 1;
+    let done = 0, added = 0, updated = 0;
+    progress(0);
+    for (const w of work) {
+      status('warn', `Encrypting ${work.indexOf(w) + 1} of ${work.length}: ${w.e.p}`);
+      const fh = await data.getFileHandle(w.e.id + '.bin', { create: true });
+      const out = await fh.createWritable();
+      try {
+        const base = done;
+        await encryptBlob(w.file, key, (chunk) => out.write(chunk), (n) => progress((base + n) / totalBytes));
+        await out.close();
+      } catch (err) { try { await out.abort(); } catch {} throw err; }
+      done += w.file.size;
+      entries.push(w.e);
+      w.isNew ? added++ : updated++;
+      log((w.isNew ? '+ added    ' : '~ updated  ') + w.e.p + '  (' + fmt(w.e.s) + ')');
+    }
+
+    const index = { v: 1, generated: new Date().toISOString(), folders: scan.folders.sort(), files: entries.sort((a, b) => a.p.localeCompare(b.p)) };
+    const idxBytes = await encryptJSON(index, key);
+    let w = await (await data.getFileHandle('index.bin', { create: true })).createWritable();
+    await w.write(idxBytes); await w.close();
+    if (fresh) {
+      w = await (await data.getFileHandle('key.json', { create: true })).createWritable();
+      await w.write(JSON.stringify(keyInfo, null, 2)); await w.close();
+    }
+
+    // remove encrypted files that are no longer used
+    const keep = new Set(entries.map((e) => e.id + '.bin'));
+    for (const name of existing) if (!keep.has(name)) await data.removeEntry(name);
+    let removed = 0;
+    for (const p of prev.keys()) if (!index.files.some((e) => e.p === p)) { log('- removed  ' + p); removed++; }
+
+    progress(null);
+    st.keyInfo = keyInfo; $('changePass').checked = false; $('confirmWrap').hidden = true; $('changeWrap').hidden = false;
+    const lib = entries.reduce((a, e) => a + e.s, 0);
+    let html = `<b>Done.</b> ${entries.length} files (${fmt(lib)}) are encrypted and ready. ${fresh && hadKey ? 'All files were re-encrypted with the new passcode.' : `${added} added, ${updated} updated, ${removed} removed.`}<br>
+      Now open <b>GitHub Desktop</b> → <b>Commit to main</b> → <b>Push origin</b>. Tablets update next time they open the app online.`;
+    if (fresh && !hadKey) html += '<br><br>Share the passcode with your team by phone or Teams — not in the same message as the link.';
+    if (fresh && hadKey) html += '<br><br><b>Passcode changed.</b> Everyone will be asked for the new one when they next open the app online.';
+    status('ok', html);
+    if (tooBig.length) status('warn', html + '<br><br><b>Skipped (over 100 MB – compress with HandBrake):</b><br>' + tooBig.join('<br>'));
+    if (!added && !updated && !removed && !fresh) log('No changes since the last publish.');
+  } catch (err) {
+    console.error(err);
+    progress(null);
+    status('bad', 'Something went wrong: ' + (err && err.message ? err.message : err) + '. Nothing was published; you can run it again.');
+  } finally {
+    $('run').disabled = false;
+  }
+});
+</script>
+</body>
+</html>

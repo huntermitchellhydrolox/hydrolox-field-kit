@@ -1,0 +1,7 @@
+_site/
+node_modules/
+# Never commit plain files – only Publisher.html's encrypted ./data
+iPad Files/
+.DS_Store
+Thumbs.db
+desktop.ini
